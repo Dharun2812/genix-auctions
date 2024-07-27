@@ -81,7 +81,7 @@ const AuctionCard = ({ props }) => {
 					Live Auction
 				</div>
 			) : (
-				<div className="text-sm mt-2 text-white bg-red-600 p-2 rounded-sm w-fit">
+				<div className="text-sm mt-2 text-white bg-red-600 p-1 rounded-sm w-fit">
 					Auction Ended
 				</div>
 			)}

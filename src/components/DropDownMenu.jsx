@@ -30,7 +30,9 @@ const DropdownMenu = ({ user, photo }) => {
 					</Link>
 				</li>
 				<li className="border-t border-gray-200">
-					<Link href="/biddings" className="block px-4 py-2 hover:bg-gray-100">
+					<Link
+						href="/profile/my-bids"
+						className="block px-4 py-2 hover:bg-gray-100">
 						My bids
 					</Link>
 				</li>
@@ -43,7 +45,7 @@ const DropdownMenu = ({ user, photo }) => {
 				</li>
 				<li className="border-t border-gray-200">
 					<Link
-						href="/my-auctions"
+						href="/profile/my-auctions"
 						className="block px-4 py-2 hover:bg-gray-100">
 						My Auctions
 					</Link>

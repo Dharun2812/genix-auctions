@@ -14,7 +14,7 @@ const AuctionItem = () => {
 	const router = useRouter()
 	const { id } = router.query
 	const session = useSession()
-	const { data, error, isLoading } = useSWR(`/api/auctions/${id}`, fetcher)
+	const { data, error } = useSWR(`/api/auctions/${id}`, fetcher)
 	const [user, setUser] = useState(null)
 	const [timeRemaining, setTimeRemaining] = useState('')
 	const [isBidModalOpen, setBidModalOpen] = useState(false)

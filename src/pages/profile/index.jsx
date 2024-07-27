@@ -4,7 +4,16 @@ import { useSession } from 'next-auth/react'
 
 const CreateAuctionItem = () => {
 	const session = useSession()
-	const user = session.data.user
+	const router = useRouter()
+
+	const [user, setUser] = useState(null)
+	useEffect(() => {
+		if (session.data) {
+			setUser(session.data.user)
+		} else {
+			router.push('/login')
+		}
+	}, [session, router])
 
 	const [form, setForm] = useState({
 		title: '',
@@ -14,7 +23,6 @@ const CreateAuctionItem = () => {
 		endDate: '',
 		imageUrl: '',
 	})
-	const router = useRouter()
 
 	const handleChange = (e) => {
 		setForm({
