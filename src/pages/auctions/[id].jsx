@@ -1,0 +1,202 @@
+import { useRouter } from 'next/router'
+import useSWR, { SWRConfig } from 'swr'
+import Image from 'next/image'
+import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import BidModal from '@/components/BidModal'
+import SuccessModal from '@/components/SuccessModal'
+import Link from 'next/link'
+
+const fetcher = (url) => fetch(url).then((r) => r.json())
+
+const AuctionItem = () => {
+	const router = useRouter()
+	const { id } = router.query
+	const session = useSession()
+	const { data, error, isLoading } = useSWR(`/api/auctions/${id}`, fetcher)
+	const [user, setUser] = useState(null)
+	const [timeRemaining, setTimeRemaining] = useState('')
+	const [isBidModalOpen, setBidModalOpen] = useState(false)
+	const [isSuccessModalOpen, setSuccessModalOpen] = useState(false)
+	const [straightBid, setStraightBid] = useState('')
+	const [maximumBid, setMaximumBid] = useState('')
+	useEffect(() => {
+		if (session.data) {
+			setUser(session.data.user)
+		} else {
+			router.push('/login')
+		}
+	}, [session])
+
+	const handleBidNow = () => {
+		setBidModalOpen(true)
+	}
+
+	const handleBidSubmit = async () => {
+		const response = await fetch('/api/bid', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				id,
+				bidder: user.name, // Replace with actual user data
+				amount: straightBid,
+			}),
+		})
+		setBidModalOpen(false)
+		setSuccessModalOpen(true)
+	}
+
+	useEffect(() => {
+		if (data) {
+			const calculateTimeRemaining = () => {
+				const end = new Date(data.data.endDate)
+				const now = new Date()
+				const difference = end - now
+
+				if (difference <= 0) {
+					setTimeRemaining('Auction ended')
+					return
+				}
+
+				const years = Math.floor(difference / (1000 * 60 * 60 * 24 * 365))
+				const months = Math.floor(
+					(difference % (1000 * 60 * 60 * 24 * 365)) /
+						(1000 * 60 * 60 * 24 * 30)
+				)
+				const weeks = Math.floor(
+					(difference % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24 * 7)
+				)
+				const days = Math.floor(
+					(difference % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24)
+				)
+				const hours = Math.floor(
+					(difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+				)
+				const minutes = Math.floor(
+					(difference % (1000 * 60 * 60)) / (1000 * 60)
+				)
+				const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+
+				let remainingTimeStr = ''
+
+				if (years > 0) remainingTimeStr += `${years}y `
+				if (months > 0) remainingTimeStr += `${months}m `
+				if (weeks > 0) remainingTimeStr += `${weeks}w `
+				if (days > 0) remainingTimeStr += `${days}d `
+				remainingTimeStr += `${hours}h ${minutes}m ${seconds}s`
+
+				setTimeRemaining(remainingTimeStr.trim())
+			}
+
+			calculateTimeRemaining()
+			const intervalId = setInterval(calculateTimeRemaining, 1000)
+
+			return () => clearInterval(intervalId)
+		}
+	}, [data])
+
+	if (error) return <div>Failed to load</div>
+	if (!data) return <div>Loading...</div>
+
+	const {
+		title,
+		description,
+		minimumBid,
+		currentBid,
+		imageUrl,
+		reviews,
+		bidHistory,
+		endDate,
+	} = data.data
+
+	return (
+		<SWRConfig>
+			<div className="container mx-auto px-4 py-8">
+				<Link href="/auctions" className="text-blue-500">
+					Back to catalog
+				</Link>
+				<div className="flex flex-col md:flex-row mt-4">
+					<div className="md:w-1/3">
+						<Image
+							src={imageUrl}
+							alt={title}
+							width={500}
+							height={500}
+							className="rounded-lg"
+						/>
+						<div className="mt-4 p-4 border rounded-lg">
+							<div className="text-sm font-bold text-green-600">
+								Live Auction
+							</div>
+							<h2 className="text-2xl font-bold mt-2">{title}</h2>
+							<p className="mt-2 text-gray-700">Minimum Bid: ${minimumBid}</p>
+							<p className="mt-2 text-gray-700">Current Bid: ${currentBid}</p>
+							<p className="mt-2 text-gray-700">Ends in: {timeRemaining}</p>
+							<button
+								onClick={() => handleBidNow()}
+								className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg">
+								Bid now
+							</button>
+						</div>
+					</div>
+					<div className="md:w-2/3 md:ml-4">
+						<div className="mt-4 md:mt-0">
+							<h3 className="text-xl font-bold">Description</h3>
+							<p className="mt-2 text-gray-700">{description}</p>
+						</div>
+						<div className="mt-8">
+							<h3 className="text-xl font-bold">Reviews</h3>
+							{reviews.map((review, index) => (
+								<div key={index} className="mt-4 p-4 border rounded-lg">
+									<div className="flex items-center">
+										<div className="text-yellow-500">
+											{'★'.repeat(review.rating)}
+											{'☆'.repeat(5 - review.rating)}
+										</div>
+										<p className="ml-2 font-bold">{review.username}</p>
+										<p className="ml-auto text-sm text-gray-500">
+											{new Date(review.date).toLocaleDateString()}
+										</p>
+									</div>
+									<p className="mt-2 text-gray-700">{review.reviewText}</p>
+								</div>
+							))}
+						</div>
+						<div className="mt-8">
+							<h3 className="text-xl font-bold">Bid History</h3>
+							<ul className="mt-2 text-gray-700">
+								{bidHistory.map((bid, index) => (
+									<li key={index} className="mt-2">
+										{bid.bidder} bids ${bid.amount} on{' '}
+										{new Date(bid.date).toLocaleString()}
+									</li>
+								))}
+							</ul>
+						</div>
+					</div>
+				</div>
+				<BidModal
+					isOpen={isBidModalOpen}
+					onSubmit={handleBidSubmit}
+					onClose={() => setBidModalOpen(false)}
+					title={title}
+					minimumBid={minimumBid}
+					currentBid={currentBid}
+					setMaximumBid={setMaximumBid}
+					setStraightBid={setStraightBid}
+					straightBid={straightBid}
+					maximumBid={maximumBid}
+					endDate={endDate}
+				/>
+				<SuccessModal
+					isOpen={isSuccessModalOpen}
+					onClose={() => setSuccessModalOpen(false)}
+				/>
+			</div>
+		</SWRConfig>
+	)
+}
+
+export default AuctionItem

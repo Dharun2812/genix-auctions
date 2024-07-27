@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-};
+	images: {
+		dangerouslyAllowSVG: true,
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: '*',
+			},
+		],
+	},
+	reactStrictMode: true,
+}
 
-export default nextConfig;
+export default nextConfig
