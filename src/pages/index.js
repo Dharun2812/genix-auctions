@@ -70,8 +70,11 @@ export default function Home() {
 				)}
 				<div className=" w-full items-center gap-3 flex-wrap justify-center font-mono text-sm flex">
 					{!loading && <div>Loading...</div>}
-					{data &&
-						data.map((item, index) => <AuctionCard key={index} props={item} />)}
+					{data && data.length ? (
+						data.map((item, index) => <AuctionCard key={index} props={item} />)
+					) : (
+						<div>Curently no Items to be diplayed</div>
+					)}
 				</div>
 			</div>
 		</main>
