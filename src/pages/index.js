@@ -49,7 +49,7 @@ export default function Home() {
 						</p>
 					</div>
 					<div className="w-[100%] lg:w-[75%] -z-10">
-						<Image src={BGImage} />
+						<Image src={BGImage} alt="home" />
 					</div>
 				</div>
 			)}

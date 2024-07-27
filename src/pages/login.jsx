@@ -156,13 +156,13 @@ const SignUpForm = () => {
 					</div>
 				</div>
 				<div className="mt-4 text-center">
-					Don't have an account?{' '}
+					Don't have an account?
 					<Link href="/signup" className="text-blue-500 hover:underline">
 						Sign up here
 					</Link>
 				</div>
 			</div>
-			<Image src={SideImage} className="mr-40 hidden lg:block" />
+			<Image src={SideImage} alt="logins" className="mr-40 hidden lg:block" />
 		</div>
 	)
 }

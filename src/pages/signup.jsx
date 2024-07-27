@@ -207,7 +207,11 @@ const SignUpForm = () => {
 							</a>
 						</div>
 					</div>
-					<Image src={SideImage} className="mr-40 hidden lg:block" />
+					<Image
+						src={SideImage}
+						alt="signup"
+						className="mr-40 hidden lg:block"
+					/>
 				</div>
 			) : (
 				<div className="flex flex-col items-center justify-center">

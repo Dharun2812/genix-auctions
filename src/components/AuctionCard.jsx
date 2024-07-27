@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { ChevronRight, Heart } from 'tabler-icons-react'
@@ -54,9 +55,11 @@ const AuctionCard = ({ props }) => {
 	return (
 		<div className="bg-white w-[18em]  h-[30em] rounded-lg shadow-gray-500 hover:border-2 border-blue-600 shadow-md p-4">
 			<div className="relative">
-				<img
+				<Image
 					src={imageUrl}
 					alt={title}
+					width={200}
+					height={200}
 					className="w-[16em] shadow-md  h-[14em] rounded-t-lg"
 				/>
 				{liked ? (

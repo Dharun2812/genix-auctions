@@ -26,7 +26,7 @@ const AuctionItem = () => {
 		} else {
 			router.push('/login')
 		}
-	}, [session])
+	}, [session, router])
 
 	const handleBidNow = () => {
 		setBidModalOpen(true)
