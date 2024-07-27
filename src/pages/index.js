@@ -1,11 +1,8 @@
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
 import BGImage from '@/assets/index.png'
 import AuctionCard from '@/components/AuctionCard'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
 	const session = useSession()
@@ -36,7 +33,7 @@ export default function Home() {
 	}, [session])
 	return (
 		<main
-			className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}>
+			className={`flex min-h-screen flex-col items-center justify-between p-24 `}>
 			{!session.data && (
 				<div className="inline lg:flex  lg:w-[80%]">
 					<div className="w-[50%]">
