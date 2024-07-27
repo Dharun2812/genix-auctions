@@ -7,6 +7,8 @@ const AuctionItemSchema = new mongoose.Schema({
 	currentBid: { type: Number, required: true },
 	endDate: { type: Date, required: true },
 	imageUrl: { type: String, required: true },
+	postedBy: { type: String, required: true },
+	live: { type: Boolean },
 	reviews: [
 		{
 			username: { type: String, required: true },

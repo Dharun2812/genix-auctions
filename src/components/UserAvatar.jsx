@@ -4,11 +4,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { User } from 'tabler-icons-react'
+import DropdownMenu from './DropDownMenu'
 
 const UserAvatar = ({ showLink = true }) => {
 	const session = useSession()
 	const [user, setUser] = useState(null)
 	const [photoURL, sethotoURL] = useState({})
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 	useEffect(() => {
 		if (session.data) {
 			setUser(session.data.user)
@@ -20,17 +22,22 @@ const UserAvatar = ({ showLink = true }) => {
 
 	return user ? (
 		showLink ? (
-			<Link href={ROUTES.PROFILE}>
-				<div className="flex rounded-full overflow-hidden items-center justify-center w-10 h-10 text-black hover:text-white hover:bg-slate-400/20 cursor-pointer">
-					<Image
-						alt={user?.name}
-						width={40}
-						height={40}
-						src={photoURL}
-						dangerouslyallowsvg="true"
-					/>
-				</div>
-			</Link>
+			<>
+				<button
+					onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+					className="flex items-center space-x-2">
+					<div className="flex rounded-full overflow-hidden items-center justify-center w-10 h-10 text-black hover:text-white hover:bg-slate-400/20 cursor-pointer">
+						<Image
+							alt={user?.name}
+							width={40}
+							height={40}
+							src={photoURL}
+							dangerouslyallowsvg="true"
+						/>
+					</div>
+				</button>
+				{isDropdownOpen && <DropdownMenu photo={photoURL} user={user} />}
+			</>
 		) : (
 			<div className="flex rounded-full overflow-hidden items-center justify-center w-10 h-10 text-black hover:text-white hover:bg-slate-400/20 cursor-pointer">
 				<Image alt={user?.displayName} width={40} height={40} src={photoURL} />

@@ -1,5 +1,6 @@
 import { connect } from '@/dbconfig/dbconfig'
 import AuctionItem from '@/models/AuctionItemModel'
+import { useSession } from 'next-auth/react'
 
 export default async function handler(req, res) {
 	const { method } = req
@@ -13,7 +14,9 @@ export default async function handler(req, res) {
 				const body = req.body
 				console.log(body)
 
-				const done = await AuctionItem.insertMany(req.body)
+				const done = await AuctionItem.insertMany({
+					...req.body,
+				})
 				res.status(201).json({ success: true, data: done })
 			} catch (error) {
 				console.log(error)

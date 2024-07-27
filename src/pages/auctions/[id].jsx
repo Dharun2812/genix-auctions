@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react'
 import BidModal from '@/components/BidModal'
 import SuccessModal from '@/components/SuccessModal'
 import Link from 'next/link'
+import ReviewModal from '@/components/ReviewModal'
 
 const fetcher = (url) => fetch(url).then((r) => r.json())
 
@@ -17,6 +18,7 @@ const AuctionItem = () => {
 	const [user, setUser] = useState(null)
 	const [timeRemaining, setTimeRemaining] = useState('')
 	const [isBidModalOpen, setBidModalOpen] = useState(false)
+	const [isReviewModalOpen, setReviewModalOpen] = useState(false)
 	const [isSuccessModalOpen, setSuccessModalOpen] = useState(false)
 	const [straightBid, setStraightBid] = useState('')
 	const [maximumBid, setMaximumBid] = useState('')
@@ -40,14 +42,31 @@ const AuctionItem = () => {
 			},
 			body: JSON.stringify({
 				id,
-				bidder: user.name, // Replace with actual user data
+				bidder: user.name,
 				amount: straightBid,
 			}),
 		})
+
 		setBidModalOpen(false)
 		setSuccessModalOpen(true)
 	}
 
+	const handleReviewSubmit = async (review) => {
+		const response = await fetch('/api/review', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				auctionId: id,
+				reviewer: user.name,
+				rating: review.rating,
+				reviewText: review.reviewText,
+			}),
+		})
+
+		setReviewModalOpen(false)
+	}
 	useEffect(() => {
 		if (data) {
 			const calculateTimeRemaining = () => {
@@ -107,6 +126,7 @@ const AuctionItem = () => {
 		currentBid,
 		imageUrl,
 		reviews,
+		live,
 		bidHistory,
 		endDate,
 	} = data.data
@@ -117,8 +137,8 @@ const AuctionItem = () => {
 				<Link href="/auctions" className="text-blue-500">
 					Back to catalog
 				</Link>
-				<div className="flex flex-col md:flex-row mt-4">
-					<div className="md:w-1/3">
+				<div className="flex flex-col gap-x-3 md:flex-row mt-4">
+					<div className="md:w-[16em]">
 						<Image
 							src={imageUrl}
 							alt={title}
@@ -126,22 +146,25 @@ const AuctionItem = () => {
 							height={500}
 							className="rounded-lg"
 						/>
-						<div className="mt-4 p-4 border rounded-lg">
-							<div className="text-sm font-bold text-green-600">
-								Live Auction
-							</div>
+						<div className="mt-4 p-4  rounded-lg">
+							{live ? (
+								<div className="text-sm font-bold text-white bg-green-600 p-2 rounded-sm w-fit">
+									Live Auction
+								</div>
+							) : (
+								<div className="text-sm font-bold text-white bg-red-600 p-2 rounded-sm w-fit">
+									Auction Ended
+								</div>
+							)}
 							<h2 className="text-2xl font-bold mt-2">{title}</h2>
 							<p className="mt-2 text-gray-700">Minimum Bid: ${minimumBid}</p>
 							<p className="mt-2 text-gray-700">Current Bid: ${currentBid}</p>
-							<p className="mt-2 text-gray-700">Ends in: {timeRemaining}</p>
-							<button
-								onClick={() => handleBidNow()}
-								className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg">
-								Bid now
-							</button>
+							{live && (
+								<p className="mt-2 text-gray-700">Ends in: {timeRemaining}</p>
+							)}
 						</div>
 					</div>
-					<div className="md:w-2/3 md:ml-4">
+					<div className="md:w-1/2 ">
 						<div className="mt-4 md:mt-0">
 							<h3 className="text-xl font-bold">Description</h3>
 							<p className="mt-2 text-gray-700">{description}</p>
@@ -163,7 +186,14 @@ const AuctionItem = () => {
 									<p className="mt-2 text-gray-700">{review.reviewText}</p>
 								</div>
 							))}
+							<button
+								onClick={() => setReviewModalOpen(true)} // Open the Review Modal
+								className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg">
+								Post Review
+							</button>
 						</div>
+					</div>
+					<div className="md:1/4 mr-4">
 						<div className="mt-8">
 							<h3 className="text-xl font-bold">Bid History</h3>
 							<ul className="mt-2 text-gray-700">
@@ -175,6 +205,13 @@ const AuctionItem = () => {
 								))}
 							</ul>
 						</div>
+						{live && (
+							<button
+								onClick={() => handleBidNow()}
+								className="mt-4 bg-blue-500 w-[16em] text-white px-4 py-2 rounded-lg">
+								Bid now
+							</button>
+						)}
 					</div>
 				</div>
 				<BidModal
@@ -193,6 +230,11 @@ const AuctionItem = () => {
 				<SuccessModal
 					isOpen={isSuccessModalOpen}
 					onClose={() => setSuccessModalOpen(false)}
+				/>
+				<ReviewModal
+					isOpen={isReviewModalOpen}
+					onClose={() => setReviewModalOpen(false)}
+					onSubmit={handleReviewSubmit} // Handle review submission
 				/>
 			</div>
 		</SWRConfig>

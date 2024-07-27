@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
 
 const CreateAuctionItem = () => {
+	const session = useSession()
+	const user = session.data.user
+
 	const [form, setForm] = useState({
 		title: '',
 		description: '',
@@ -27,7 +31,7 @@ const CreateAuctionItem = () => {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(form),
+				body: JSON.stringify({ ...form, postedBy: user.email }),
 			})
 			const result = await response.json()
 			console.log(result)

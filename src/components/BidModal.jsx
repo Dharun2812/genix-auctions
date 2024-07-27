@@ -30,6 +30,7 @@ const BidModal = ({
 					<label className="block font-bold">Straight bid</label>
 					<input
 						type="number"
+						min={currentBid}
 						value={straightBid}
 						onChange={(e) => setStraightBid(e.target.value)}
 						className="w-full border rounded px-2 py-1"
@@ -38,6 +39,7 @@ const BidModal = ({
 				<div className="mb-4">
 					<label className="block font-bold">Maximum bid</label>
 					<input
+						min={currentBid}
 						type="number"
 						value={maximumBid}
 						onChange={(e) => setMaximumBid(e.target.value)}
