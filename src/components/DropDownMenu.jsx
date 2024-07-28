@@ -27,6 +27,14 @@ const DropdownMenu = ({ user, photo }) => {
 
 				<li className="border-t border-gray-200">
 					<Link
+						href="/profile/create-auction"
+						className="block px-4 py-2 hover:bg-gray-100">
+						Create Auction
+					</Link>
+				</li>
+
+				<li className="border-t border-gray-200">
+					<Link
 						href="/profile/my-bids"
 						className="block px-4 py-2 hover:bg-gray-100">
 						My bids

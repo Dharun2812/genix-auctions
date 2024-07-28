@@ -54,7 +54,7 @@ const EditAuction = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 
-		const response = await fetch(`/api/updateAuction?id=${id}`, {
+		const response = await fetch(`/api/update-item?id=${id}`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',

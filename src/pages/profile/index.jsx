@@ -147,7 +147,7 @@ const Profile = () => {
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 					{liked.length > 0 ? (
 						liked.map((auction) => (
-							<AuctionCard key={auction._id} props={auction} editable={true} />
+							<AuctionCard key={auction._id} props={auction} />
 						))
 					) : (
 						<p>You have not liked any auction yet.</p>
@@ -157,6 +157,11 @@ const Profile = () => {
 
 			<div className="mb-8">
 				<h2 className="text-xl font-bold mb-2">My Auctions</h2>
+				<Link
+					className="mt-4 w-[20em] flex align-middle items-center justify-center bg-gradient-to-r from-red-500 to-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+					href="/profile/create-auction">
+					Create Auction
+				</Link>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 					{auctions.length > 0 ? (
 						auctions.map((auction) => (

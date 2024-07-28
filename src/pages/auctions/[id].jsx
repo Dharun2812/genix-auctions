@@ -38,20 +38,24 @@ const AuctionItem = () => {
 	}
 
 	const handleBidSubmit = async () => {
-		const response = await fetch('/api/bid', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				id,
-				bidder: user.name,
-				amount: straightBid,
-			}),
-		})
+		if (straightBid > currentBid) {
+			const response = await fetch('/api/bid', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					id,
+					bidder: user.name,
+					amount: straightBid,
+				}),
+			})
 
-		setBidModalOpen(false)
-		setSuccessModalOpen(true)
+			setBidModalOpen(false)
+			setSuccessModalOpen(true)
+		} else {
+			alert('Bid should be higher than current bid')
+		}
 	}
 
 	const handleReviewSubmit = async (review) => {
