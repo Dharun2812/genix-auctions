@@ -2,6 +2,8 @@ import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import { SessionProvider } from 'next-auth/react'
 import '@/styles/globals.css'
+import Head from 'next/head'
+import Seo from '@/components/Seo'
 
 export default function App({
 	Component,
@@ -9,6 +11,7 @@ export default function App({
 }) {
 	return (
 		<SessionProvider session={session}>
+			<Seo />
 			<div>
 				<div className="fixed  bg-pink-100  w-full m-0 top-0 left-0 z-50">
 					<Header />
