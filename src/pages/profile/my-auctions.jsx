@@ -48,10 +48,10 @@ const Auctions = () => {
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 				{auctions.length > 0 ? (
 					auctions.map((auction) => (
-						<AuctionCard key={auction._id} props={auction} />
+						<AuctionCard key={auction._id} props={auction} editable={true} />
 					))
 				) : (
-					<p>You have not placed any bids yet.</p>
+					<p>You have not auctioned anything yet.</p>
 				)}
 			</div>
 		</div>

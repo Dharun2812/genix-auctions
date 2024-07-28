@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SideImage from '@/assets/signup.png'
 import SuccessImage from '@/assets/success.png'
 import Image from 'next/image'
 import { ROUTES } from '@/routes'
 import Link from 'next/link'
 import { ChevronRight } from 'tabler-icons-react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 
 const SignUpForm = () => {
 	const [formData, setFormData] = useState({
@@ -14,6 +16,15 @@ const SignUpForm = () => {
 		password: '',
 		receiveEmails: true,
 	})
+	const session = useSession()
+	const router = useRouter()
+
+	useEffect(() => {
+		if (session.data) {
+			console.log(session.data)
+			router.push('/')
+		}
+	}, [session])
 	const [success, setSuccess] = useState(false)
 
 	const [errors, setErrors] = useState({

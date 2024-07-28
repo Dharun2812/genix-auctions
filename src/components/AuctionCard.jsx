@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { ChevronRight, Heart } from 'tabler-icons-react'
 
-const AuctionCard = ({ props }) => {
+const AuctionCard = ({ props, editable }) => {
 	const { imageUrl, title, minimumBid, currentBid, endDate, _id, live } = props
 	const [liked, setLiked] = useState(false)
 	const [timeRemaining, setTimeRemaining] = useState('')
@@ -89,22 +89,33 @@ const AuctionCard = ({ props }) => {
 			<p className="text-gray-600">Minimum Bid: ${minimumBid}</p>
 			<p className="text-gray-600">Current Bid: ${currentBid}</p>
 			{live && <p className="text-gray-600">Ends in: {timeRemaining}</p>}
-			{live ? (
-				<button className="mt-4 w-full flex align-middle items-center justify-center bg-gradient-to-r from-red-500 to-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">
-					<Link
-						className="w-full flex align-middle items-center justify-center"
-						href={`/auctions/${_id}`}>
-						{' '}
-						Bid now <ChevronRight />
-					</Link>
-				</button>
+			{!editable ? (
+				live ? (
+					<button className="mt-4 w-full flex align-middle items-center justify-center bg-gradient-to-r from-red-500 to-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">
+						<Link
+							className="w-full flex align-middle items-center justify-center"
+							href={`/auctions/${_id}`}>
+							{' '}
+							Bid now <ChevronRight />
+						</Link>
+					</button>
+				) : (
+					<button className="mt-4 w-full flex align-middle items-center justify-center bg-gradient-to-r from-red-500 to-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">
+						<Link
+							className="w-full flex align-middle items-center justify-center"
+							href={`/auctions/${_id}`}>
+							{' '}
+							View Bid <ChevronRight />
+						</Link>
+					</button>
+				)
 			) : (
 				<button className="mt-4 w-full flex align-middle items-center justify-center bg-gradient-to-r from-red-500 to-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">
 					<Link
 						className="w-full flex align-middle items-center justify-center"
-						href={`/auctions/${_id}`}>
+						href={`/auctions/edit/${_id}`}>
 						{' '}
-						View Bid <ChevronRight />
+						Edit Bid <ChevronRight />
 					</Link>
 				</button>
 			)}
