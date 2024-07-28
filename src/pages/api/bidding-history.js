@@ -1,7 +1,4 @@
-import { connect } from '@/dbconfig/dbconfig'
 import AuctionItem from '@/models/AuctionItemModel'
-
-connect()
 
 export default async (req, res) => {
 	const { userId } = req.query

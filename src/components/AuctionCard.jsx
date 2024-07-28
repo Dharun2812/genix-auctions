@@ -1,21 +1,78 @@
+import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { ChevronRight, Heart } from 'tabler-icons-react'
 
 const AuctionCard = ({ props, editable }) => {
-	const { imageUrl, title, minimumBid, currentBid, endDate, _id, live } = props
+	const {
+		imageUrl,
+		title,
+		minimumBid,
+		currentBid,
+		endDate,
+		_id,
+		live,
+		likedBy,
+	} = props
 	const [liked, setLiked] = useState(false)
 	const [timeRemaining, setTimeRemaining] = useState('')
+	const router = useRouter()
+	const session = useSession()
+	const [user, setUser] = useState()
 
 	useEffect(() => {
-		const calculateTimeRemaining = () => {
+		if (session.data) {
+			setUser(session.data.user)
+			if (likedBy.includes(session.data.user.email)) setLiked(true)
+		}
+	}, [session])
+	const handleDelete = async () => {
+		const res = await fetch(`/api/auctions/delete-auction?id=${_id}`, {
+			method: 'DELETE',
+		})
+		console.log(res)
+		if (res.ok) {
+			alert('Deleted Successfully')
+			router.reload()
+		}
+	}
+
+	const like = async () => {
+		if (user) {
+			const res = await fetch(
+				`/api/auctions/like-auction?id=${_id}&email=${user.email}`
+			)
+			if (res.ok) {
+				setLiked(true)
+			}
+		} else {
+			setLiked(true)
+		}
+	}
+	const removeLike = async () => {
+		if (user) {
+			const res = await fetch(
+				`/api/auctions/dislike-auction?id=${_id}&email=${user.email}`
+			)
+			if (res.ok) {
+				setLiked(false)
+			}
+		} else {
+			setLiked(false)
+		}
+	}
+
+	useEffect(() => {
+		const calculateTimeRemaining = async () => {
 			const end = new Date(endDate)
 			const now = new Date()
 			const difference = end - now
 
 			if (difference <= 0) {
 				setTimeRemaining('Auction ended')
+				await fetch(`/api/auctions/close-auction?id=${_id}`)
 				return
 			}
 
@@ -46,14 +103,16 @@ const AuctionCard = ({ props, editable }) => {
 			setTimeRemaining(remainingTimeStr.trim())
 		}
 
-		calculateTimeRemaining()
-		const intervalId = setInterval(calculateTimeRemaining, 1000)
+		if (live) {
+			calculateTimeRemaining()
+			const intervalId = setInterval(calculateTimeRemaining, 1000)
 
-		return () => clearInterval(intervalId)
-	}, [endDate])
+			return () => clearInterval(intervalId)
+		}
+	}, [endDate, live])
 
 	return (
-		<div className="bg-white w-[18em]  h-[30em] rounded-lg shadow-gray-500 hover:border-2 border-blue-600 shadow-md p-4">
+		<div className="bg-white w-[18em]  h-[32em] rounded-lg shadow-gray-500 hover:border-2 border-blue-600 shadow-md p-4">
 			<div className="relative">
 				<Image
 					src={imageUrl}
@@ -64,13 +123,13 @@ const AuctionCard = ({ props, editable }) => {
 				/>
 				{liked ? (
 					<button
-						onClick={() => setLiked(false)}
+						onClick={() => removeLike()}
 						className="absolute top-2 right-2 border-2 rounded-full  text-red-500 hover:text-red-700">
 						<Heart fill="#ff0000" />
 					</button>
 				) : (
 					<button
-						onClick={() => setLiked(true)}
+						onClick={() => like()}
 						className="absolute border-2  rounded-full  text-black top-2 right-2 ">
 						<Heart />
 					</button>
@@ -110,14 +169,20 @@ const AuctionCard = ({ props, editable }) => {
 					</button>
 				)
 			) : (
-				<button className="mt-4 w-full flex align-middle items-center justify-center bg-gradient-to-r from-red-500 to-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">
-					<Link
-						className="w-full flex align-middle items-center justify-center"
-						href={`/auctions/edit/${_id}`}>
-						{' '}
-						Edit Bid <ChevronRight />
-					</Link>
-				</button>
+				<>
+					<button className="mt-4 w-full flex align-middle items-center justify-center bg-gradient-to-r from-red-500 to-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">
+						<Link
+							className="w-full flex align-middle items-center justify-center"
+							href={`/auctions/edit/${_id}`}>
+							Edit Auction <ChevronRight />
+						</Link>
+					</button>
+					<button
+						onClick={() => handleDelete()}
+						className="mt-4 w-full flex align-middle items-center justify-center bg-gradient-to-r from-red-500 to-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">
+						Delete Auction <ChevronRight />
+					</button>
+				</>
 			)}
 		</div>
 	)

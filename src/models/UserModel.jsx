@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false,
 	},
+	liked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'AuctionItem' }],
 	forgotpasswordtoken: String,
 	forgotpasswordtokenexpiry: Date,
 	verifiedtokien: String,

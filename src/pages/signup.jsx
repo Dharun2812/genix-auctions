@@ -226,7 +226,7 @@ const SignUpForm = () => {
 				</div>
 			) : (
 				<div className="flex flex-col items-center justify-center">
-					<Image className="object-cover" src={SuccessImage} />
+					<Image className="object-cover" alt="success" src={SuccessImage} />
 					<Link className="w-24" href={ROUTES.LOGIN}>
 						<div className="flex overflow-hidden items-center justify-center  h-10 bg-blue-500 rounded-md px-2 text-white hover:text-white hover:bg-blue-400/80 cursor-pointer">
 							Login <ChevronRight />

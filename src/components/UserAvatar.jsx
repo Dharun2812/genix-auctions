@@ -40,7 +40,7 @@ const UserAvatar = ({ showLink = true }) => {
 			</>
 		) : (
 			<div className="flex rounded-full overflow-hidden items-center justify-center w-10 h-10 text-black hover:text-white hover:bg-slate-400/20 cursor-pointer">
-				<Image alt={user?.displayName} width={40} height={40} src={photoURL} />
+				<Image alt={user?.name} width={40} height={40} src={photoURL} />
 			</div>
 		)
 	) : showLink ? (

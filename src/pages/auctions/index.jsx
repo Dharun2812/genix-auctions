@@ -24,8 +24,9 @@ const AuctionPage = () => {
 		}
 	}, [data])
 	return (
-		<div>
-			<div className=" w-full items-center gap-3 flex-wrap justify-center font-mono text-sm flex">
+		<div className="container mx-auto px-4 py-8">
+			<h1 className="text-2xl font-bold mb-4">Auctions</h1>
+			<div className=" w-full items-center gap-3 flex-wrap justify-start font-mono text-sm flex">
 				{!loading && <div>Loading...</div>}
 				{data && data.length ? (
 					data.map((item, index) => <AuctionCard key={index} props={item} />)

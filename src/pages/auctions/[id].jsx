@@ -7,6 +7,7 @@ import BidModal from '@/components/BidModal'
 import SuccessModal from '@/components/SuccessModal'
 import Link from 'next/link'
 import ReviewModal from '@/components/ReviewModal'
+import { ChevronLeft } from 'tabler-icons-react'
 
 const fetcher = (url) => fetch(url).then((r) => r.json())
 
@@ -16,11 +17,13 @@ const AuctionItem = () => {
 	const session = useSession()
 	const { data, error } = useSWR(`/api/auctions/${id}`, fetcher)
 	const [user, setUser] = useState(null)
+	const [biddable, setBiddable] = useState(true)
 	const [timeRemaining, setTimeRemaining] = useState('')
 	const [isBidModalOpen, setBidModalOpen] = useState(false)
 	const [isReviewModalOpen, setReviewModalOpen] = useState(false)
 	const [isSuccessModalOpen, setSuccessModalOpen] = useState(false)
 	const [straightBid, setStraightBid] = useState('')
+	const [hasReviewed, setHasReviewed] = useState(false)
 	const [maximumBid, setMaximumBid] = useState('')
 	useEffect(() => {
 		if (session.data) {
@@ -68,14 +71,25 @@ const AuctionItem = () => {
 		setReviewModalOpen(false)
 	}
 	useEffect(() => {
-		if (data) {
-			const calculateTimeRemaining = () => {
+		if (user && data) {
+			if (user.email === data.data.postedBy) setBiddable(false)
+			else setBiddable(true)
+			const reviewed = data.data.reviews.some(
+				(review) => review.username === user.name
+			)
+			setHasReviewed(reviewed)
+		}
+	}, [user, data])
+	useEffect(() => {
+		if (data && data.data.live) {
+			const calculateTimeRemaining = async () => {
 				const end = new Date(data.data.endDate)
 				const now = new Date()
 				const difference = end - now
 
 				if (difference <= 0) {
 					setTimeRemaining('Auction ended')
+					await fetch(`/api/auctions/close-auction?id=${id}`)
 					return
 				}
 
@@ -129,14 +143,20 @@ const AuctionItem = () => {
 		live,
 		bidHistory,
 		endDate,
+		postedBy,
 	} = data.data
 
 	return (
 		<SWRConfig>
 			<div className="container mx-auto px-4 py-8">
-				<Link href="/auctions" className="text-blue-500">
+				<button
+					onClick={() => {
+						router.back()
+					}}
+					className="text-blue-500 flex">
+					<ChevronLeft />
 					Back to catalog
-				</Link>
+				</button>
 				<div className="flex flex-col gap-x-3 md:flex-row mt-4">
 					<div className="md:w-[16em]">
 						<Image
@@ -164,7 +184,7 @@ const AuctionItem = () => {
 							)}
 						</div>
 					</div>
-					<div className="md:w-1/2 ">
+					<div className="lg:w-1/2 md:w-2/5">
 						<div className="mt-4 md:mt-0">
 							<h3 className="text-xl font-bold">Description</h3>
 							<p className="mt-2 text-gray-700">{description}</p>
@@ -186,26 +206,31 @@ const AuctionItem = () => {
 									<p className="mt-2 text-gray-700">{review.reviewText}</p>
 								</div>
 							))}
-							<button
-								onClick={() => setReviewModalOpen(true)} // Open the Review Modal
-								className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg">
-								Post Review
-							</button>
+							{!hasReviewed && (
+								<button
+									onClick={() => setReviewModalOpen(true)} // Open the Review Modal
+									className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg">
+									Post Review
+								</button>
+							)}
 						</div>
 					</div>
-					<div className="md:1/4 mr-4">
+					<div className="lg:1/4 mr-4">
 						<div className="mt-8">
 							<h3 className="text-xl font-bold">Bid History</h3>
 							<ul className="mt-2 text-gray-700">
-								{bidHistory.map((bid, index) => (
-									<li key={index} className="mt-2">
-										{bid.bidder} bids ${bid.amount} on{' '}
-										{new Date(bid.date).toLocaleString()}
-									</li>
-								))}
+								{bidHistory
+									.slice()
+									.reverse()
+									.map((bid, index) => (
+										<li key={index} className="mt-2">
+											{bid.bidder} bids ${bid.amount} on{' '}
+											{new Date(bid.date).toLocaleString()}
+										</li>
+									))}
 							</ul>
 						</div>
-						{live && (
+						{live && biddable && (
 							<button
 								onClick={() => handleBidNow()}
 								className="mt-4 bg-blue-500 w-[16em] text-white px-4 py-2 rounded-lg">

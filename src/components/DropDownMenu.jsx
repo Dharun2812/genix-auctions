@@ -24,11 +24,7 @@ const DropdownMenu = ({ user, photo }) => {
 						View profile
 					</Link>
 				</li>
-				<li className="border-t border-gray-200">
-					<Link href="/settings" className="block px-4 py-2 hover:bg-gray-100">
-						Settings
-					</Link>
-				</li>
+
 				<li className="border-t border-gray-200">
 					<Link
 						href="/profile/my-bids"
@@ -36,13 +32,7 @@ const DropdownMenu = ({ user, photo }) => {
 						My bids
 					</Link>
 				</li>
-				<li className="border-t border-gray-200">
-					<Link
-						href="/credit-cards"
-						className="block px-4 py-2 hover:bg-gray-100">
-						Credit cards
-					</Link>
-				</li>
+
 				<li className="border-t border-gray-200">
 					<Link
 						href="/profile/my-auctions"
@@ -50,11 +40,7 @@ const DropdownMenu = ({ user, photo }) => {
 						My Auctions
 					</Link>
 				</li>
-				<li className="border-t border-gray-200">
-					<Link href="/invite" className="block px-4 py-2 hover:bg-gray-100">
-						Invite colleagues
-					</Link>
-				</li>
+
 				<li className="border-t border-gray-200">
 					<Link
 						href="/notifications"
@@ -62,21 +48,7 @@ const DropdownMenu = ({ user, photo }) => {
 						Notifications
 					</Link>
 				</li>
-				<li className="border-t border-gray-200">
-					<Link href="/community" className="block px-4 py-2 hover:bg-gray-100">
-						Community
-					</Link>
-				</li>
-				<li className="border-t border-gray-200">
-					<Link href="/support" className="block px-4 py-2 hover:bg-gray-100">
-						Support
-					</Link>
-				</li>
-				<li className="border-t border-gray-200">
-					<Link href="/api" className="block px-4 py-2 hover:bg-gray-100">
-						API
-					</Link>
-				</li>
+
 				<li className="border-t border-gray-200">
 					<button
 						onClick={() => signOut()}

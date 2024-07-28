@@ -24,6 +24,7 @@ const AuctionItemSchema = new mongoose.Schema({
 			date: { type: Date, required: true },
 		},
 	],
+	likedBy: [{ type: String }],
 })
 const AuctionItem =
 	mongoose.models.AuctionItem ||
