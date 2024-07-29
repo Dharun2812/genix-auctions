@@ -8,6 +8,7 @@ import SuccessModal from '@/components/SuccessModal'
 import Link from 'next/link'
 import ReviewModal from '@/components/ReviewModal'
 import { ChevronLeft } from 'tabler-icons-react'
+import WinnerModal from '@/components/WinnerModal'
 
 const fetcher = (url) => fetch(url).then((r) => r.json())
 
@@ -22,6 +23,7 @@ const AuctionItem = () => {
 	const [isBidModalOpen, setBidModalOpen] = useState(false)
 	const [isReviewModalOpen, setReviewModalOpen] = useState(false)
 	const [isSuccessModalOpen, setSuccessModalOpen] = useState(false)
+	const [isWinnerModalOpen, setWinnerModalOpen] = useState(false)
 	const [straightBid, setStraightBid] = useState('')
 	const [hasReviewed, setHasReviewed] = useState(false)
 	const [maximumBid, setMaximumBid] = useState('')
@@ -82,6 +84,7 @@ const AuctionItem = () => {
 				(review) => review.username === user.name
 			)
 			setHasReviewed(reviewed)
+			if (!data.data.live) setWinnerModalOpen(true)
 		}
 	}, [user, data])
 	useEffect(() => {
@@ -148,6 +151,7 @@ const AuctionItem = () => {
 		bidHistory,
 		endDate,
 		postedBy,
+		winner,
 	} = data.data
 
 	return (
@@ -264,6 +268,11 @@ const AuctionItem = () => {
 					isOpen={isReviewModalOpen}
 					onClose={() => setReviewModalOpen(false)}
 					onSubmit={handleReviewSubmit} // Handle review submission
+				/>
+				<WinnerModal
+					isOpen={isWinnerModalOpen}
+					onClose={() => setWinnerModalOpen(false)}
+					winner={winner}
 				/>
 			</div>
 		</SWRConfig>

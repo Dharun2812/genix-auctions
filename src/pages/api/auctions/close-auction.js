@@ -11,9 +11,17 @@ export default async function handler(req, res) {
 	await connect()
 
 	try {
+		const item = await AuctionItem.findById(id)
+		const bids = item.bidHistory
+		// console.log(bids)
+		const latestBid = bids.reduce((latest, current) => {
+			return new Date(current.date) > new Date(latest.date) ? current : latest
+		}, bids[0])
+
+		console.log(latestBid)
 		const auctionItem = await AuctionItem.findByIdAndUpdate(
 			id,
-			{ ...req.body, live: false },
+			{ ...req.body, live: false, winner: latestBid },
 			{
 				new: true,
 			}
